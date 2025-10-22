@@ -1,38 +1,42 @@
 const sounds = ['clap', 'kick', 'snare', 'tom', 'tink'];
-const buttons = document.getElementById('buttons');
+const buttonsDiv = document.getElementById('buttons');
 
-let currentAudio = null;
+// Store audio elements for later control
+const audios = {};
 
-// create buttons dynamically
+// Preload all audio elements into DOM
+sounds.forEach(sound => {
+  const audio = document.createElement('audio');
+  audio.src = `./sounds/${sound}.mp3`;
+  audio.preload = 'auto'; // ensures it loads before playback
+  document.body.appendChild(audio);
+  audios[sound] = audio;
+});
+
+// Create a button for each sound
 sounds.forEach(sound => {
   const btn = document.createElement('button');
   btn.classList.add('btn');
   btn.textContent = sound;
 
-  // create an audio element for each sound
-  const audio = document.createElement('audio');
-  audio.src = `./sounds/${sound}.mp3`;
-  document.body.appendChild(audio);
-
   btn.addEventListener('click', () => {
-    stopSounds();
-    currentAudio = audio;
-    audio.play().catch(() => {});
+    stopAllSounds();
+    audios[sound].play().catch(err => console.log(err));
   });
 
-  buttons.appendChild(btn);
+  buttonsDiv.appendChild(btn);
 });
 
-// stop button
+// Stop button
 const stopBtn = document.createElement('button');
 stopBtn.classList.add('stop');
 stopBtn.textContent = 'Stop';
-stopBtn.addEventListener('click', stopSounds);
-buttons.appendChild(stopBtn);
+stopBtn.addEventListener('click', stopAllSounds);
+buttonsDiv.appendChild(stopBtn);
 
-function stopSounds() {
-  const audios = document.querySelectorAll('audio');
-  audios.forEach(a => {
+// Function to stop all sounds
+function stopAllSounds() {
+  Object.values(audios).forEach(a => {
     a.pause();
     a.currentTime = 0;
   });
