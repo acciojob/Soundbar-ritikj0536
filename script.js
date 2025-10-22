@@ -1,34 +1,35 @@
-//your JS code here. If required.
-// ✅ List of sound names (must match your file names inside sounds/ folder)
 const sounds = ['clap', 'kick', 'snare', 'tom', 'tink'];
+const buttons = document.getElementById('buttons');
 
-// Get the buttons container
-const buttonsDiv = document.getElementById('buttons');
+let currentAudio = null;
 
-// Create a button for each sound
+// create buttons dynamically
 sounds.forEach(sound => {
   const btn = document.createElement('button');
   btn.classList.add('btn');
   btn.textContent = sound;
 
-  // On click, stop all sounds then play selected one
+  // create an audio element for each sound
+  const audio = document.createElement('audio');
+  audio.src = `./sounds/${sound}.mp3`;
+  document.body.appendChild(audio);
+
   btn.addEventListener('click', () => {
     stopSounds();
-    const audio = new Audio(`./sounds/${sound}.mp3`);
-    audio.play();
+    currentAudio = audio;
+    audio.play().catch(() => {});
   });
 
-  buttonsDiv.appendChild(btn);
+  buttons.appendChild(btn);
 });
 
-// Create Stop button
+// stop button
 const stopBtn = document.createElement('button');
 stopBtn.classList.add('stop');
 stopBtn.textContent = 'Stop';
 stopBtn.addEventListener('click', stopSounds);
-buttonsDiv.appendChild(stopBtn);
+buttons.appendChild(stopBtn);
 
-// Function to stop all sounds
 function stopSounds() {
   const audios = document.querySelectorAll('audio');
   audios.forEach(a => {
